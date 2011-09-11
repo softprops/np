@@ -14,16 +14,28 @@ object Keys {
 }
 
 object BuildSbt {
+
+  private val SbtVersion = "{sbtVersion}"
+
+  /** Handles cross sbt versioning.  */
+  private def versionBind(version: String, plugin: Boolean) = {
+    if(!plugin) """:= "%s"""".format(version)
+    else {
+      if(version.contains(SbtVersion)) {
+        """<<= sbtVersion(v => "%s".format(v))""".format(version.replace(SbtVersion, "%s"))
+      } else """:= "%s"""".format(version)
+    }
+  }
   def apply(plugin: Boolean, org: String, name: String, version: String) =
     """%sorganization := "%s"
     |
     |name := "%s"
     |
-    |version := "%s"""".stripMargin.format(
+    |version %s""".stripMargin.format(
       if(plugin) "sbtPlugin := true\n\n" else "",
       org,
       name,
-      version
+      versionBind(version, plugin)
     )
 }
 
@@ -65,7 +77,7 @@ object Plugin extends sbt.Plugin {
       first(false) { case Plgin(p) => bool(p) },
       first(defaults.org)   { case Org(o)   => o },
       first(defaults.name)  { case Name(n)  => n },
-      first(defaults.version)   { case Vers(v)  => v },
+      first(defaults.version) { case Vers(v)  => v },
       first(defaults.dir)   { case Dir(d) => d }
     )
 

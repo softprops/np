@@ -52,6 +52,8 @@ If you have a `~/.sbt` directory created, in a `~/.sbt/plugins/project/build.sca
 
 This will make `np`'s setting available to all of your sbt projects.
 
+### Customization
+
 If you have a lot of projects that use the same ivy organization id or you always start projects with the same version conventions, you may want to define your own custom global overrides.
 
 To do so, in a `~/.sbt/np.sbt` file, add the following.
@@ -61,6 +63,16 @@ To do so, in a `~/.sbt/np.sbt` file, add the following.
     )
 
 See the `np` option reference section below for all available options
+
+### Optional sbt cross sbt versioning
+
+In sbt 0.10.*, plugins are no longer exclusively depended on as source, meaning they need may not be compatible between versions of sbt. The current work around is to cross publish plugins with a version unique to a given version of sbt. `Np` supports this for plugin projects via {keyword} replacement
+
+    np plugin:true version:1.0.1-{sbtVersion}-SNAPSHOT
+
+Will generate a version binding of
+
+    version <<= sbtVersion(v => "1.0.1-%s-SNAPSHOT".format(v))
 
 ## Settings
 

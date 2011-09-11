@@ -1,0 +1,13 @@
+Initial release. Provides a minimal interface for generating new sbt projects via,... sbt.
+
+Basic use is to install the plugin global an start up a new project with
+
+    $ sbt
+    $ np name:my-project org:com.mypackage version:0.1.0-SNAPSHOT
+
+This will generate a simple `build.sbt` project for you along with the standard project directory structure for main and test sources.
+
+For more advanced usage, see the project's [readme](https://github.com/softprops/np) for more info
+
+
+
