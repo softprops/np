@@ -43,10 +43,27 @@ In most cases a global installation will make the most sense as the target usage
 If you have a `~/.sbt` directory created, in a `~/.sbt/plugins/project/build.scala` file add the following
 
     import sbt._
+    import Keys._
+
+    object Plugins extends Build {
+      lazy val root = Project("root", file("."), settings =
+        Defaults.defaultSettings ++ Seq(
+          libraryDependencies <++= (sbtVersion)(v => Seq(
+            "me.lessis" %% "np" % "0.1.0-%s".format(v)
+        )),
+        resolvers += "lessis" at "http://repo.lessis.me"
+      ))
+    }
+
+    import sbt._
+
+Or if you prefer, you can call depend on the project reference as a `git` repositor
+
+    import sbt._
 
     object Plugins extends Build {
       lazy val root = Project("root", file(".")) dependsOn(
-        uri("git://github.com/softprops/np.git#master")
+        uri("git://github.com/softprops/np.git#010")
       )
     }
 
