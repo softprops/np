@@ -57,7 +57,7 @@ If you have a `~/.sbt` directory created, in a `~/.sbt/plugins/project/build.sca
 
     import sbt._
 
-Or if you prefer, you can call depend on the project reference as a `git` repositor
+Or if you prefer, you can call depend on the project reference as a `git` repository.
 
     import sbt._
 
