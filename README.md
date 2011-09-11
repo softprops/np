@@ -63,7 +63,7 @@ Or if you prefer, you can call depend on the project reference as a `git` reposi
 
     object Plugins extends Build {
       lazy val root = Project("root", file(".")) dependsOn(
-        uri("git://github.com/softprops/np.git#010")
+        uri("git://github.com/softprops/np.git#0.1.0")
       )
     }
 
