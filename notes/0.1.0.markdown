@@ -1,6 +1,6 @@
 Initial release. Provides a minimal interface for generating new sbt projects via,... sbt.
 
-Basic use is to install the plugin global an start up a new project with
+Basic use is to install the plugin globally and start up a new project with
 
     $ sbt
     $ np name:my-project org:com.mypackage version:0.1.0-SNAPSHOT
