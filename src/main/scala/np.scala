@@ -87,7 +87,7 @@ object Plugin extends sbt.Plugin {
         out.log.info(Usage.display)
     }
 
-  // will auto mix into project settings
+  // will auto-mix into project settings
   override def settings: Seq[Setting[_]] = inConfig(Np)(Seq(
     usage <<= usageTask,
     check <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
@@ -96,9 +96,12 @@ object Plugin extends sbt.Plugin {
           val (_, base) = extract(args, name, org, rev, bd, ".")
           val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
           dirs :+ bf filter(_.exists) match {
-            case Nil => ()
+            case Nil =>
+              out.log.info("Looks good. Run `np` task to generate project.")
             case existing =>
-              out.log.warn("The following files/directories already exist\n\n%s" format(existing.mkString("\n\n")))
+              out.log.warn("The following files/directories already exist\n\n%s".format(
+                existing.mkString("\n\n"))
+              )
           }
       }
     }
