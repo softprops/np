@@ -5,7 +5,7 @@ Simple utility for creating new projects in Sbt
 Steps it took to get this project started
 
     $ touch build.sbt
-    $ src/{main,test}/scala
+    $ mkdir -p src/{main,test}/scala
     $ e build.sbt # fill in the basics (name, organization, version)
     $ touch README.md && e README.md
     $ sbt
