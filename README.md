@@ -14,7 +14,7 @@ Steps it took to get this project started
 Desired steps to take to start this project
 
     $ sbt
-    $ np org:me.lessis name:np version:0.1.0
+    $ np name:np
     # start coding
 
 New project? No problem.
