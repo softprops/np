@@ -115,7 +115,7 @@ object Plugin extends sbt.Plugin {
           // error out if any of the target files to generate
           // already exist
           if((dirs :+ bf).find(_.exists).isDefined) error(
-            "existing project detected at this path"
+            "\nexisting project detected at the path %s" format bf.getParent
           )
 
           IO.write(bf, scpt)
