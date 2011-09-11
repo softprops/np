@@ -31,6 +31,32 @@ the directory named sub-project-dir relative you your projects base directory. F
 
 Or remove the generated stub `build.sbt` and just use the generate source tree
 
+### Installation
+
+In most cases a global installation will make the most sense as the target usage for this plugin is the creation of new projects
+
+If you have a `~/.sbt` directory created, in a `~/.sbt/plugins/project/build.scala` file add the following
+
+    import sbt._
+
+    object Plugins extends Build {
+      lazy val root = Project("root", file(".")) dependsOn(
+        uri("git://github.com/softprops/np.git#master")
+      )
+    }
+
+This will make `np`'s setting available to all of your sbt projects.
+
+If you have a lot of projects that use the same ivy organization id or you always start projects with the same version conventions, you may want to define your own custom global overrides.
+
+To do so, in a `~/.sbt/np.sbt` file, add the following.
+
+    (np.Keys.defaults in Np) <<= (np.Keys.defaults in Np)(d =>
+      d.copy(org = "me.lessis", version = "0.1.0-SNAPSHOT")
+    )
+
+See the `np` option reference section below for all available options
+
 ### Settings
 
     np          # generates a new project given a set of options
@@ -38,7 +64,7 @@ Or remove the generated stub `build.sbt` and just use the generate source tree
     np:usage    # displays usage options
     np:defaults # default values for options
 
-#### np option ref
+#### np option reference
 
 `np` generates sbt projects given `key:value` options. Below is a list of current options
 
