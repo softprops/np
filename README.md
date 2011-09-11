@@ -33,18 +33,19 @@ Or remove the generated stub `build.sbt` and just use the generate source tree
 
 ### Settings
 
-    np       # generates a new project given a set of options
-    np:check # detects potential conflicts with generating a project, recommended before np
-    np:usage # displays usage options
+    np          # generates a new project given a set of options
+    np:check    # detects potential conflicts with generating a project, recommended before np
+    np:usage    # displays usage options
+    np:defaults # default values for options
 
 #### np option ref
 
 `np` generates sbt projects given `key:value` options. Below is a list of current options
 
-    org     Project organization. Defaults to sbt built-in default
-    name    Project name. Defaults to sbt built-in default
-    version Project version. Defaults to sbt built-in default
-    plugin  Boolean indicator of whether the project is a plugin project. Defaults to false
-    dir     Path to dir where np should generate project. Defaults to '.'
+    org     Project organization. Defaults to defaults key sbt built-in default
+    name    Project name. Defaults to defaults key or sbt built-in default
+    version Project version. Defaults to defaults key or sbt built-in default
+    plugin  Boolean indicator of whether the project is a plugin project. Defaults to defaults key or false
+    dir     Path to dir where np should generate project. Defaults to defaults key or '.'
 
 Doug Tangren (softprops) 2011

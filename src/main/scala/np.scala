@@ -3,8 +3,12 @@ package np
 import sbt._
 import Project.Initialize
 
+case class Defaults(org: String, name: String, version: String,
+                    plugin: Boolean = false, dir: String = ".")
+
 object Keys {
   val np = InputKey[Unit]("np", "Sbt project generator")
+  val defaults = SettingKey[Defaults]("defaults", "Default options used to generate projects")
   val check = InputKey[Unit]("check", "Does a dry run to check for conflicts")
   val usage = TaskKey[Unit]("usage", "Displays np usage info")
 }
@@ -46,8 +50,7 @@ object Plugin extends sbt.Plugin {
 
   val Np = config("np") extend(Runtime)
 
-  private def extract(args: Seq[String], name: String, org: String,
-                      rev: String, pbase: File, dir: String = ".") = {
+  private def extract(args: Seq[String], pbase: File, defaults: Defaults) = {
 
     val Name  = """name\:(\S+)""".r
     val Vers  = """version\:(\S+)""".r
@@ -60,10 +63,10 @@ object Plugin extends sbt.Plugin {
 
     val (p, o, n, v, d) = (
       first(false) { case Plgin(p) => bool(p) },
-      first(org)   { case Org(o)   => o },
-      first(name)  { case Name(n)  => n },
-      first(rev)   { case Vers(v)  => v },
-      first(dir)   { case Dir(d) => d }
+      first(defaults.org)   { case Org(o)   => o },
+      first(defaults.name)  { case Name(n)  => n },
+      first(defaults.version)   { case Vers(v)  => v },
+      first(defaults.dir)   { case Dir(d) => d }
     )
 
     (BuildSbt(p, o, n, v), d match {
@@ -89,11 +92,12 @@ object Plugin extends sbt.Plugin {
 
   // will auto-mix into project settings
   override def settings: Seq[Setting[_]] = inConfig(Np)(Seq(
+    defaults <<= (name, organization, version)(Defaults(_, _, _)),
     usage <<= usageTask,
     check <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
-      (argsTask, baseDirectory, streams, name, organization, version) map {
-        (args, bd, out, name, org, rev) =>
-          val (_, base) = extract(args, name, org, rev, bd, ".")
+      (argsTask, baseDirectory, streams, defaults in Np) map {
+        (args, bd, out, defaults) =>
+          val (_, base) = extract(args, bd, defaults)
           val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
           dirs :+ bf filter(_.exists) match {
             case Nil =>
@@ -107,9 +111,9 @@ object Plugin extends sbt.Plugin {
     }
   )) ++ Seq(
     np <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
-      (argsTask, baseDirectory, streams, name, organization, version) map {
-        (args, bd, out, name, org, vers) =>
-          val (scpt, base) = extract(args, name, org, vers, bd, ".")
+      (argsTask, baseDirectory, streams, defaults in Np) map {
+        (args, bd, out, defaults) =>
+          val (scpt, base) = extract(args, bd, defaults)
           val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
 
           // error out if any of the target files to generate
