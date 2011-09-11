@@ -17,7 +17,7 @@ Desired steps to take to start this project
     $ np name:np
     # start coding
 
-New project? No problem.
+^ No context switching ^.
 
 Already have a project and want a sub project? No problem.
 
