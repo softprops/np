@@ -31,7 +31,12 @@ the directory named sub-project-dir relative you your projects base directory. F
 
 Or remove the generated stub `build.sbt` and just use the generate source tree
 
-### Installation
+## Requirements
+
+- Simple Build Tool
+- The buring desire to start your projects quickly
+
+## Installation
 
 In most cases a global installation will make the most sense as the target usage for this plugin is the creation of new projects
 
@@ -57,14 +62,14 @@ To do so, in a `~/.sbt/np.sbt` file, add the following.
 
 See the `np` option reference section below for all available options
 
-### Settings
+## Settings
 
     np          # generates a new project given a set of options
     np:check    # detects potential conflicts with generating a project, recommended before np
     np:usage    # displays usage options
     np:defaults # default values for options
 
-#### np option reference
+### np option reference
 
 `np` generates sbt projects given `key:value` options. Below is a list of current options
 
