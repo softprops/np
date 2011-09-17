@@ -1,17 +1,6 @@
-package np
-
 import sbt._
 import Project.Initialize
 
-case class Defaults(org: String, name: String, version: String,
-                    plugin: Boolean = false, dir: String = ".")
-
-object Keys {
-  val np = InputKey[Unit]("np", "Sbt project generator")
-  val defaults = SettingKey[Defaults]("defaults", "Default options used to generate projects")
-  val check = InputKey[Unit]("check", "Does a dry run to check for conflicts")
-  val usage = TaskKey[Unit]("usage", "Displays np usage info")
-}
 
 object BuildSbt {
 
@@ -39,7 +28,7 @@ object BuildSbt {
     )
 }
 
-object Usage {
+private [this] object Usage {
   val display = """
   |Usage: <key>:<value> <key2>:<value2> ...
   |
@@ -55,59 +44,73 @@ object Usage {
 }
 
 object Plugin extends sbt.Plugin {
+  import Keys._
   import sbt.Keys._
-  import np.Keys._
-  import java.io.File
-  import java.lang.Boolean.{parseBoolean => bool}
 
-  val Np = config("np") extend(Runtime)
+  object np {
 
-  private def extract(args: Seq[String], pbase: File, defaults: Defaults) = {
+    import java.io.File
+    import java.lang.Boolean.{parseBoolean => bool}
 
-    val Name  = """name\:(\S+)""".r
-    val Vers  = """version\:(\S+)""".r
-    val Org   = """org\:(\S+)""".r
-    val Plgin = """plugin\:(\S+)""".r
-    val Dir   = """dir\:(\S+)""".r
+    case class Defaults(org: String, name: String, version: String,
+                    plugin: Boolean = false, dir: String = ".")
 
-    def first[T](default: T)(pf: PartialFunction[String, T]) =
-      args.collect(pf).headOption.getOrElse(default)
+    object Keys {
+      val np = InputKey[Unit]("np", "Sbt project generator")
+      val defaults = SettingKey[Defaults]("defaults", "Default options used to generate projects")
+      val check = InputKey[Unit]("check", "Does a dry run to check for conflicts")
+      val usage = TaskKey[Unit]("usage", "Displays np usage info")
+    }
+    import np.Keys._
 
-    val (p, o, n, v, d) = (
-      first(false) { case Plgin(p) => bool(p) },
-      first(defaults.org)   { case Org(o)   => o },
-      first(defaults.name)  { case Name(n)  => n },
-      first(defaults.version) { case Vers(v)  => v },
-      first(defaults.dir)   { case Dir(d) => d }
-    )
+    val Config = config("np")
 
-    (BuildSbt(p, o, n, v), d match {
-      case "." => pbase
-      case path => new File(pbase, path)
-    })
-  }
+    private def extract(args: Seq[String], pbase: File, defaults: Defaults) = {
 
-  private def configDirs(conf: String)(base: File) =
-    Seq("scala", "resources") map { d => new File(base, "src/%s/%s".format(conf,d)) }
+      val Name  = """name\:(\S+)""".r
+      val Vers  = """version\:(\S+)""".r
+      val Org   = """org\:(\S+)""".r
+      val Plgin = """plugin\:(\S+)""".r
+      val Dir   = """dir\:(\S+)""".r
 
-  private def mainDirs = configDirs("main")_
+      def first[T](default: T)(pf: PartialFunction[String, T]) =
+        args.collect(pf).headOption.getOrElse(default)
 
-  private def testDirs = configDirs("test")_
+      val (p, o, n, v, d) = (
+        first(false) { case Plgin(p) => bool(p) },
+        first(defaults.org)   { case Org(o)   => o },
+        first(defaults.name)  { case Name(n)  => n },
+        first(defaults.version) { case Vers(v)  => v },
+        first(defaults.dir)   { case Dir(d) => d }
+      )
 
-  private def genDirs(base: File): Seq[File] = mainDirs(base) ++ testDirs(base)
-
-  private def usageTask: Initialize[Task[Unit]] =
-    (streams) map {
-      (out) =>
-        out.log.info(Usage.display)
+      (BuildSbt(p, o, n, v), d match {
+        case "." => pbase
+        case path => new File(pbase, path)
+      })
     }
 
+    private def configDirs(conf: String)(base: File) =
+      Seq("scala", "resources") map { d => new File(base, "src/%s/%s".format(conf,d)) }
+
+    private def mainDirs = configDirs("main")_
+
+    private def testDirs = configDirs("test")_
+
+    private def genDirs(base: File): Seq[File] = mainDirs(base) ++ testDirs(base)
+
+    private def usageTask: Initialize[Task[Unit]] =
+      (streams) map {
+        (out) =>
+          out.log.info(Usage.display)
+     }
+
   // will auto-mix into project settings
-  override def settings: Seq[Setting[_]] = inConfig(Np)(Seq(
+  def settings: Seq[Setting[_]] = inConfig(Config)(Seq(
     defaults <<= (name, organization, version)(Defaults(_, _, _)),
     usage <<= usageTask,
     check <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
-      (argsTask, baseDirectory, streams, defaults in Np) map {
+      (argsTask, baseDirectory, streams, defaults in Config) map {
         (args, bd, out, defaults) =>
           val (_, base) = extract(args, bd, defaults)
           val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
@@ -122,8 +125,8 @@ object Plugin extends sbt.Plugin {
       }
     }
   )) ++ Seq(
-    np <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
-      (argsTask, baseDirectory, streams, defaults in Np) map {
+    Keys.np <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
+      (argsTask, baseDirectory, streams, defaults in Config) map {
         (args, bd, out, defaults) =>
           val (scpt, base) = extract(args, bd, defaults)
           val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
@@ -141,4 +144,5 @@ object Plugin extends sbt.Plugin {
           out.log.info("Generated source directories")
        }
     })
+  }
 }
