@@ -22,7 +22,7 @@ object BuildSbt {
     if(!plugin) """:= "%s"""".format(version)
     else {
       if(version.contains(SbtVersion)) {
-        """<<= sbtVersion(v => "%s".format(v))""".format(version.replace(SbtVersion, "%s"))
+        """<<= sbtVersion("%s" format _)""".format(version.replace(SbtVersion, "%s"))
       } else """:= "%s"""".format(version)
     }
   }
@@ -36,7 +36,7 @@ object BuildSbt {
       org,
       name,
       versionBind(version, plugin)
-    )
+    ).trim()
 }
 
 object Usage {

@@ -1,0 +1,8 @@
+# should generate templated cross sbt version
+# for plugins
+> np name:foo org:com.bar version:0.1.0-{sbtVersion}-SNAPSHOT dir:foo plugin:true
+$ exists foo/src/main/scala
+$ exists foo/src/main/resources
+$ exists foo/src/test/scala
+$ exists foo/src/test/resources
+> contents fixtures/build.sbt foo/build.sbt

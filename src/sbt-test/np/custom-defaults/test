@@ -1,0 +1,8 @@
+# create a project from defaults
+> np
+$ exists foo/build.sbt
+$ exists foo/src/main/scala
+$ exists foo/src/main/resources
+$ exists foo/src/test/scala
+$ exists foo/src/test/resources
+> contents fixtures/build.sbt foo/build.sbt
