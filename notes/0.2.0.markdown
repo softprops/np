@@ -21,9 +21,9 @@ To access or override settings, use the `NpKeys` module
 
 nuff said
 
-- Sbt 0.11.0 exclusive
+- built for sbt 0.11.0
 
-For now, this plugin is only built for [0.11], at this time the latest and greatets version of [sbt][setup].
+For now, this plugin is only built for [0.11][sbt11], at this time the latest and greatest version of [sbt][setup].
 
 Install with `addSbtPlugin("me.lessis" % "np" % "0.2.0")`
 
