@@ -100,7 +100,7 @@ object Plugin extends sbt.Plugin {
         out.log.info(Usage.display)
     }
 
-  def npSettings: Seq[Setting[_]] = Seq(
+  def npSettings0: Seq[Setting[_]] = Seq(
     defaults in np <<= (name, organization, version)(Defaults(_, _, _)),
     usage in np <<= usageTask,
     check <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
@@ -139,7 +139,7 @@ object Plugin extends sbt.Plugin {
     }
   )
 
-  def npSettingsIn(c: Configuration) = inConfig(c)(npSettings)
+  def npSettingsIn(c: Configuration) = inConfig(c)(npSettings0)
 
   // will auto-mix into project settings
   override def settings: Seq[Setting[_]] = npSettingsIn(Compile) ++ npSettingsIn(Test)
