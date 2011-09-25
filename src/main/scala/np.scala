@@ -6,14 +6,7 @@ import Project.Initialize
 case class Defaults(org: String, name: String, version: String,
                     plugin: Boolean = false, dir: String = ".")
 
-object Keys {
-  val np = InputKey[Unit]("np", "Sbt project generator")
-  val defaults = SettingKey[Defaults]("defaults", "Default options used to generate projects")
-  val check = InputKey[Unit]("check", "Does a dry run to check for conflicts")
-  val usage = TaskKey[Unit]("usage", "Displays np usage info")
-}
-
-object BuildSbt {
+private object BuildSbt {
 
   private val SbtVersion = "{sbtVersion}"
 
@@ -39,7 +32,7 @@ object BuildSbt {
     ).trim()
 }
 
-object Usage {
+private object Usage {
   val display = """
   |Usage: <key>:<value> <key2>:<value2> ...
   |
@@ -56,11 +49,16 @@ object Usage {
 
 object Plugin extends sbt.Plugin {
   import sbt.Keys._
-  import np.Keys._
+  import NpKeys._
   import java.io.File
   import java.lang.Boolean.{parseBoolean => bool}
 
-  val Np = config("np") extend(Runtime)
+  object NpKeys {
+    val np = InputKey[Unit]("np", "Sbt project generator")
+    val defaults = SettingKey[Defaults]("defaults", "Default options used to generate projects")
+    val check = InputKey[Unit]("check", "Does a dry run to check for conflicts")
+    val usage = TaskKey[Unit]("usage", "Displays np usage info")
+  }
 
   private def extract(args: Seq[String], pbase: File, defaults: Defaults) = {
 
@@ -102,12 +100,11 @@ object Plugin extends sbt.Plugin {
         out.log.info(Usage.display)
     }
 
-  // will auto-mix into project settings
-  override def settings: Seq[Setting[_]] = inConfig(Np)(Seq(
-    defaults <<= (name, organization, version)(Defaults(_, _, _)),
-    usage <<= usageTask,
+  def npSettings: Seq[Setting[_]] = Seq(
+    defaults in np <<= (name, organization, version)(Defaults(_, _, _)),
+    usage in np <<= usageTask,
     check <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
-      (argsTask, baseDirectory, streams, defaults in Np) map {
+      (argsTask, baseDirectory, streams, defaults in np) map {
         (args, bd, out, defaults) =>
           val (_, base) = extract(args, bd, defaults)
           val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
@@ -120,10 +117,9 @@ object Plugin extends sbt.Plugin {
               )
           }
       }
-    }
-  )) ++ Seq(
+    },
     np <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
-      (argsTask, baseDirectory, streams, defaults in Np) map {
+      (argsTask, baseDirectory, streams, defaults in np) map {
         (args, bd, out, defaults) =>
           val (scpt, base) = extract(args, bd, defaults)
           val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
@@ -140,5 +136,11 @@ object Plugin extends sbt.Plugin {
           IO.createDirectories(dirs)
           out.log.info("Generated source directories")
        }
-    })
+    }
+  )
+
+  def npSettingsIn(c: Configuration) = inConfig(c)(npSettings)
+
+  // will auto-mix into project settings
+  override def settings: Seq[Setting[_]] = npSettingsIn(Compile) ++ npSettingsIn(Test)
 }

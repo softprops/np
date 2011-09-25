@@ -1,0 +1,36 @@
+# sbt plugin [best practices][bp] certified.
+
+- Be gone plugin config. Come hither task dependent keys.
+
+Below is a migration table for the new style of accessing np keys
+
+    np          -> np
+    np:check    -> check(for np)     or (check in (SomeConfig, np))
+    np:usage    -> usage(for np)     or (usage in (SomeConfig, np))
+    np:defaults -> defaults(for np)  or (defaults in (SomeConfig, np))
+
+- New `NpKeys` module for accessing settings
+
+To access or override settings, use the `NpKeys` module
+
+    (NpKeys.defaults in (Compile, NpKeys.np)) <<= (NpKeys.defaults in (Compile, NpKeys.np))(d =>
+      d.copy(org => "com.foo")
+    )
+
+- [Scripted plugin][sp] tested
+
+nuff said
+
+- Sbt 0.11.0 exclusive
+
+For now, this plugin is only built for [0.11], at this time the latest and greatets version of [sbt][setup].
+
+Install with `addSbtPlugin("me.lessis" % "np" % "0.2.0")`
+
+For more info, see the project [readme][rm]
+
+[bp]: https://github.com/harrah/xsbt/wiki/Plugins-Best-Practices
+[sp]: eed3si9n.com/testing-sbt-plugins
+[setup]: https://github.com/harrah/xsbt/wiki/Setup
+[sbt11]: http://typesafe.artifactoryonline.com/typesafe/ivy-releases/org.scala-tools.sbt/sbt-launch/0.11.0/sbt-launch.jar
+[rm]: github.com/softprops/np#readme

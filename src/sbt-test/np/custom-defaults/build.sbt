@@ -1,6 +1,6 @@
-seq(np.Plugin.settings:_*)
+// np settings are auto included
 
-(np.Keys.defaults in Np) <<= (np.Keys.defaults in Np)(d =>
+(NpKeys.defaults in (Compile, NpKeys.np)) <<= (NpKeys.defaults in (Compile,NpKeys.np))(d =>
   d.copy(name = "foo", org = "com.bar",
          dir = "foo", version="0.1-TEST")
 )

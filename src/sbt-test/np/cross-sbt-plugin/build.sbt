@@ -1,4 +1,4 @@
-seq(np.Plugin.settings:_*)
+// np settings are auto included
 
 InputKey[Unit]("contents") <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
   (argsTask, streams) map {
