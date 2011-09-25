@@ -27,6 +27,8 @@ For now, this plugin is only built for [0.11][sbt11], at this time the latest an
 
 Install with `addSbtPlugin("me.lessis" % "np" % "0.2.0")`
 
+And include settings with `seq(npSettings:_*)`
+
 For more info, see the project [readme][rm]
 
 [bp]: https://github.com/harrah/xsbt/wiki/Plugins-Best-Practices
