@@ -19,6 +19,7 @@ private object BuildSbt {
       } else """:= "%s"""".format(version)
     }
   }
+
   def apply(plugin: Boolean, org: String, name: String, version: String) =
     """%sorganization := "%s"
     |
@@ -49,15 +50,17 @@ private object Usage {
 
 object Plugin extends sbt.Plugin {
   import sbt.Keys._
-  import NpKeys._
+  import NpKeys.{ np => npkey, _ => _ }
   import java.io.File
-  import java.lang.Boolean.{parseBoolean => bool}
+  import java.lang.Boolean.{ parseBoolean => bool }
 
   object NpKeys {
+    private def key(name: String) = "np-%s" format name
+
     val np = InputKey[Unit]("np", "Sbt project generator")
-    val defaults = SettingKey[Defaults]("defaults", "Default options used to generate projects")
-    val check = InputKey[Unit]("check", "Does a dry run to check for conflicts")
-    val usage = TaskKey[Unit]("usage", "Displays np usage info")
+    val defaults = SettingKey[Defaults](key("defaults"), "Default options used to generate projects")
+    val check = InputKey[Unit](key("check"), "Does a dry run to check for conflicts")
+    val usage = TaskKey[Unit](key("usage"), "Displays np usage info")
   }
 
   private def extract(args: Seq[String], pbase: File, defaults: Defaults) = {
@@ -86,7 +89,9 @@ object Plugin extends sbt.Plugin {
   }
 
   private def configDirs(conf: String)(base: File) =
-    Seq("scala", "resources") map { d => new File(base, "src/%s/%s".format(conf,d)) }
+    Seq("scala", "resources") map { d =>
+      new File(base, "src/%s/%s".format(conf,d))
+    }
 
   private def mainDirs = configDirs("main")_
 
@@ -101,10 +106,10 @@ object Plugin extends sbt.Plugin {
     }
 
   def npSettings0: Seq[Setting[_]] = Seq(
-    defaults in np <<= (name, organization, version)(Defaults(_, _, _)),
-    usage in np <<= usageTask,
+    defaults in npkey <<= (name, organization, version)(Defaults(_, _, _)),
+    usage in npkey <<= usageTask,
     check <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
-      (argsTask, baseDirectory, streams, defaults in np) map {
+      (argsTask, baseDirectory, streams, defaults in npkey) map {
         (args, bd, out, defaults) =>
           val (_, base) = extract(args, bd, defaults)
           val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
@@ -118,15 +123,15 @@ object Plugin extends sbt.Plugin {
           }
       }
     },
-    np <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
-      (argsTask, baseDirectory, streams, defaults in np) map {
+    npkey <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
+      (argsTask, baseDirectory, streams, defaults in npkey) map {
         (args, bd, out, defaults) =>
           val (scpt, base) = extract(args, bd, defaults)
           val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
 
           // error out if any of the target files to generate
           // already exist
-          if((dirs :+ bf).find(_.exists).isDefined) error(
+          if((dirs :+ bf).find(_.exists).isDefined) sys.error(
             "\nexisting project detected at the path %s" format bf.getParent
           )
 
@@ -142,5 +147,6 @@ object Plugin extends sbt.Plugin {
   def npSettingsIn(c: Configuration) = inConfig(c)(npSettings0)
 
   // will auto-mix into project settings
-  override def settings: Seq[Setting[_]] = npSettingsIn(Compile) ++ npSettingsIn(Test)
+  override def settings: Seq[Setting[_]] =
+    npSettingsIn(Compile) ++ npSettingsIn(Test)
 }
