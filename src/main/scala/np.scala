@@ -55,12 +55,10 @@ object Plugin extends sbt.Plugin {
   import java.lang.Boolean.{ parseBoolean => bool }
 
   object NpKeys {
-    private def key(name: String) = "np-%s" format name
-
     val np = InputKey[Unit]("np", "Sbt project generator")
-    val defaults = SettingKey[Defaults](key("defaults"), "Default options used to generate projects")
-    val check = InputKey[Unit](key("check"), "Does a dry run to check for conflicts")
-    val usage = TaskKey[Unit](key("usage"), "Displays np usage info")
+    val defaults = SettingKey[Defaults]("defaults", "Default options used to generate projects")
+    val check = InputKey[Unit]("check", "Does a dry run to check for conflicts")
+    val usage = TaskKey[Unit]("usage", "Displays np usage info")
   }
 
   private def extract(args: Seq[String], pbase: File, defaults: Defaults) = {
