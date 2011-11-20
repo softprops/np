@@ -40,19 +40,11 @@ Or remove the generated stub `build.sbt` and just use the generate source tree
 
 In most cases a global installation will make the most sense as the target usage for this plugin is the creation of new projects
 
-If you have a `~/.sbt` directory created, in a `~/.sbt/plugins/project/build.scala` file add the following
+If you have a `~/.sbt` directory created, in a `~/.sbt/plugins/build.sbt` file add the following
 
-    import sbt._
-    import sbt.Keys._
+    addSbtPlugin("me.lessis" % "np" % "0.2.0")
 
-    object Plugins extends Build {
-      lazy val root = Project("root", file("."), settings =
-        Defaults.defaultSettings ++ addSbtPlugin(
-            "me.lessis" % "np" % "0.2.0"
-        ),
-        resolvers += "lessis" at "http://repo.lessis.me"
-      ))
-    }
+    resolvers += "lessis" at "http://repo.lessis.me"
 
 Or if you prefer, you can call depend on the project reference as a `git` repository.
 
