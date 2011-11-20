@@ -43,14 +43,13 @@ In most cases a global installation will make the most sense as the target usage
 If you have a `~/.sbt` directory created, in a `~/.sbt/plugins/project/build.scala` file add the following
 
     import sbt._
-    import Keys._
+    import sbt.Keys._
 
     object Plugins extends Build {
       lazy val root = Project("root", file("."), settings =
-        Defaults.defaultSettings ++ Seq(
-          libraryDependencies <++= (sbtVersion)(v => Seq(
-            "me.lessis" %% "np" % "0.1.0-%s".format(v)
-        )),
+        Defaults.defaultSettings ++ addSbtPlugin(
+            "me.lessis" % "np" % "0.2.0"
+        ),
         resolvers += "lessis" at "http://repo.lessis.me"
       ))
     }
@@ -63,7 +62,7 @@ Or if you prefer, you can call depend on the project reference as a `git` reposi
 
     object Plugins extends Build {
       lazy val root = Project("root", file(".")) dependsOn(
-        uri("git://github.com/softprops/np.git#0.1.0")
+        uri("git://github.com/softprops/np.git#0.2.0")
       )
     }
 
@@ -71,32 +70,24 @@ This will make `np`'s setting available to all of your sbt projects.
 
 ### Customization
 
-If you have a lot of projects that use the same ivy organization id or you always start projects with the same version conventions, you may want to define your own custom global overrides.
+If you have a lot of projects that use the same ivy organization id (your own) or you always start projects with the same version conventions (a SNAPSHOT), you may want to define your own custom global overrides.
 
 To do so, in a `~/.sbt/np.sbt` file, add the following.
 
-    (np.Keys.defaults in Np) <<= (np.Keys.defaults in Np)(d =>
-      d.copy(org = "me.lessis", version = "0.1.0-SNAPSHOT")
-    )
+    seq(npSettings:_*)
+
+    (NpKeys.defaults in (Compile, NpKeys.np)) ~= {
+      _.copy(org="me.lessis", version="0.1.0-SNAPSHOT")
+    }
 
 See the `np` option reference section below for all available options
 
-### Optional sbt cross sbt versioning
-
-In sbt 0.10.*, plugins are no longer exclusively depended on as source, meaning they need may not be compatible between versions of sbt. The current work around is to cross publish plugins with a version unique to a given version of sbt. `Np` supports this for plugin projects via {keyword} replacement
-
-    np plugin:true version:1.0.1-{sbtVersion}-SNAPSHOT
-
-Will generate a version binding of
-
-    version <<= sbtVersion(v => "1.0.1-%s-SNAPSHOT".format(v))
-
 ## Settings
 
-    np          # generates a new project given a set of options
-    np:check    # detects potential conflicts with generating a project, recommended before np
-    np:usage    # displays usage options
-    np:defaults # default values for options
+    np                  # generates a new project given a set of options
+    scout(for np)       # detects potential conflicts with generating a project, recommended before np
+    np:usage(for np)    # displays usage options
+    np:defaults(for np) # default values for options
 
 ### np option reference
 
@@ -107,5 +98,11 @@ Will generate a version binding of
     version Project version. Defaults to defaults key or sbt built-in default
     plugin  Boolean indicator of whether the project is a plugin project. Defaults to defaults key or false
     dir     Path to dir where np should generate project. Defaults to defaults key or '.'
+
+## Contributing / Issues
+
+Please post any issues or ideas you have to [np's issues](https://github.com/softprops/np/issues)
+
+If you like rolling up your sleaves feel free to fork and create a feature branch
 
 Doug Tangren (softprops) 2011
