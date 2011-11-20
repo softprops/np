@@ -86,8 +86,8 @@ See the `np` option reference section below for all available options
 
     np                  # generates a new project given a set of options
     scout(for np)       # detects potential conflicts with generating a project, recommended before np
-    np:usage(for np)    # displays usage options
-    np:defaults(for np) # default values for options
+    usage(for np)    # displays usage options
+    defaults(for np) # default values for options
 
 ### np option reference
 
