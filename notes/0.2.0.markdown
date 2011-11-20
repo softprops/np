@@ -36,4 +36,4 @@ For more info, see the project [readme][rm]
 [setup]: https://github.com/harrah/xsbt/wiki/Setup
 [sbt11]: http://typesafe.artifactoryonline.com/typesafe/ivy-releases/org.scala-tools.sbt/sbt-launch/0.11.0/sbt-launch.jar
 [sbt111]: http://typesafe.artifactoryonline.com/typesafe/ivy-releases/org.scala-tools.sbt/sbt-launch/0.11.1/sbt-launch.jar
-[rm]: github.com/softprops/np#readme
+[rm]: https://github.com/softprops/np#readme
