@@ -57,7 +57,7 @@ object Plugin extends sbt.Plugin {
   object NpKeys {
     val np = InputKey[Unit]("np", "Sbt project generator")
     val defaults = SettingKey[Defaults]("defaults", "Default options used to generate projects")
-    val check = InputKey[Unit]("check", "Does a dry run to check for conflicts")
+    val scout = InputKey[Unit]("scout", "Does a dry run to check for conflicts")
     val usage = TaskKey[Unit]("usage", "Displays np usage info")
   }
 
@@ -95,7 +95,8 @@ object Plugin extends sbt.Plugin {
 
   private def testDirs = configDirs("test")_
 
-  private def genDirs(base: File): Seq[File] = mainDirs(base) ++ testDirs(base)
+  private def genDirs(base: File): Seq[File] =
+    mainDirs(base) ++ testDirs(base)
 
   private def usageTask: Initialize[Task[Unit]] =
     (streams) map {
@@ -104,13 +105,17 @@ object Plugin extends sbt.Plugin {
     }
 
   def npSettings0: Seq[Setting[_]] = Seq(
-    defaults in npkey <<= (name, organization, version)(Defaults(_, _, _)),
+    defaults in npkey <<= /*(defaults in npkey) or */(
+      name, organization, version)(Defaults(_, _, _)),
     usage in npkey <<= usageTask,
-    check <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
+    scout in npkey <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
       (argsTask, baseDirectory, streams, defaults in npkey) map {
         (args, bd, out, defaults) =>
           val (_, base) = extract(args, bd, defaults)
-          val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
+          val (bf, dirs) = (
+            new File(base, "build.sbt"),
+            genDirs(base)
+          )
           dirs :+ bf filter(_.exists) match {
             case Nil =>
               out.log.info("Looks good. Run `np` task to generate project.")
@@ -145,6 +150,6 @@ object Plugin extends sbt.Plugin {
   def npSettingsIn(c: Configuration) = inConfig(c)(npSettings0)
 
   // will auto-mix into project settings
-  override def settings: Seq[Setting[_]] =
-    npSettingsIn(Compile) ++ npSettingsIn(Test)
+  def npSettings: Seq[Setting[_]] =
+    npSettingsIn(Test) ++ npSettingsIn(Compile)
 }
