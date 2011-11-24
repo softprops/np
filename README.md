@@ -56,7 +56,11 @@ Or if you prefer, you can call depend on the project reference as a `git` reposi
       )
     }
 
-This will make `np`'s setting available to all of your sbt projects.
+Be sure to _explicitly_ mix np's settings into your build definition.
+
+    seq(npSettings: _*)
+
+Doing this in a global `.sbt` file under `~/.sbt` will make `np`'s setting available to all of your sbt projects.
 
 ### Customization
 
