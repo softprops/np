@@ -1,0 +1,18 @@
+
+{
+ "organization":"me.lessis",
+ "name":"np",
+ "version":"0.2.0",
+ "description":"Generates sbt project source structures",
+ "site":"",
+ "tags":["sbt"],
+ "docs":"",
+ "licenses": [{
+   "name": "MIT",
+   "url": "https://github.com/softprops/np/blob/0.2.0/LICENSE"
+  }],
+ "resolvers": ["http://repo.lessis.me"],
+ "dependencies": [],
+ "scalas": ["2.9.1"],
+ "sbt": true
+}
