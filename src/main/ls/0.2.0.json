@@ -4,15 +4,19 @@
  "name":"np",
  "version":"0.2.0",
  "description":"Generates sbt project source structures",
- "site":"",
+ "site":"https://github.com/softprops/np",
  "tags":["sbt"],
  "docs":"",
  "licenses": [{
    "name": "MIT",
    "url": "https://github.com/softprops/np/blob/0.2.0/LICENSE"
   }],
- "resolvers": ["http://repo.lessis.me"],
- "dependencies": [],
+ "resolvers": ["http://scala-tools.org/repo-releases"],
+ "dependencies": [{
+   "organization":"org.scala-tools.sbt",
+   "name": "scripted-sbt_2.9.1",
+   "version": "0.11.2"
+  }],
  "scalas": ["2.9.1"],
  "sbt": true
 }
