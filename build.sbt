@@ -15,16 +15,14 @@ seq(lsSettings:_*)
 
 (LsKeys.tags in LsKeys.lsync) := Seq("sbt")
 
-//(externalResolvers in LsKeys.lsync) := Seq("less is" at "http://repo.lessis.me")
-
 homepage :=
   Some(url("https://github.com/softprops/np"))
 
 description :=
   "Generates sbt project source structures"
 
-licenses <<= (version)(Seq(
-  v => ("MIT", url("https://github.com/softprops/np/blob/%s/LICENSE".format(v)))
+licenses <<= (version)(v => Seq(
+  ("MIT", url("https://github.com/softprops/np/blob/%s/LICENSE".format(v)))
 ))
 
 publishTo := Some(Resolver.url("sbt-plugin-releases", url(
