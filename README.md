@@ -44,7 +44,9 @@ If you have a `~/.sbt` directory created, in a `~/.sbt/plugins/build.sbt` file a
 
     addSbtPlugin("me.lessis" % "np" % "0.2.0")
 
-    resolvers += "lessis" at "http://repo.lessis.me"
+    resolvers += Resolver.url("sbt-plugin-releases",
+      url("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"))(
+        Resolver.ivyStylePatterns)
 
 Or if you prefer, you can call depend on the project reference as a `git` repository.
 
@@ -78,8 +80,8 @@ See the `np` option reference section below for all available options
 
 ## Settings
 
-    np                  # generates a new project given a set of options
-    scout(for np)       # detects potential conflicts with generating a project, recommended before np
+    np               # generates a new project given a set of options
+    scout(for np)    # detects potential conflicts with generating a project, recommended before np
     usage(for np)    # displays usage options
     defaults(for np) # default values for options
 
@@ -97,6 +99,6 @@ See the `np` option reference section below for all available options
 
 Please post any issues or ideas you have to [np's issues](https://github.com/softprops/np/issues)
 
-If you like rolling up your sleaves feel free to fork and create a feature branch
+If you like rolling up your sleaves, feel free to fork and create a feature branch
 
 Doug Tangren (softprops) 2011-12
