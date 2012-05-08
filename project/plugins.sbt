@@ -1,7 +1,4 @@
-libraryDependencies <++= (sbtVersion) { sv => Seq(
-  "org.scala-tools.sbt" %% "scripted-plugin" % sv
-  )
-}
+libraryDependencies <+= sbtVersion("org.scala-sbt" %% "scripted-plugin" % _)
 
 addSbtPlugin("me.lessis" % "ls-sbt" % "0.1.1")
 
