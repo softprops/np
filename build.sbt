@@ -5,7 +5,7 @@ organization := "me.lessis"
 name := "np"
 
 version <<= sbtVersion { v =>
-  if(v.startsWith("0.11")) "0.2.0"
+  if (v.startsWith("0.11") || v.startsWith("0.12")) "0.2.0"
   else error("unsupported version of sbt %s" format v)
 }
 
