@@ -25,9 +25,7 @@ licenses <<= (version)(v => Seq(
   ("MIT", url("https://github.com/softprops/np/blob/%s/LICENSE".format(v)))
 ))
 
-publishTo := Some(Resolver.url("sbt-plugin-releases", url(
-  "http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"
-))(Resolver.ivyStylePatterns))
+publishTo := Some(Classpaths.sbtPluginReleases)
 
 publishMavenStyle := false
 
