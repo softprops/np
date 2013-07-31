@@ -40,6 +40,8 @@ Or remove the generated stub `build.sbt` and just use the generate source tree
 
 In most cases a global installation will make the most sense as the target usage for this plugin is the creation of new projects
 
+### for sbt 0.12 of lower
+
 If you have a `~/.sbt` directory created, in a `~/.sbt/plugins/build.sbt` file add the following
 
     addSbtPlugin("me.lessis" % "np" % "0.2.0")
@@ -64,11 +66,23 @@ Be sure to _explicitly_ mix np's settings into your build definition.
 
 Doing this in a global `.sbt` file under `~/.sbt` will make `np`'s setting available to all of your sbt projects.
 
+### for sbt 0.13+
+
+If you don't already have one, create an `~/.sbt/0.13/plugins` directory. And inside of it, create an `np.sbt` ( it doesn't matter what you call it ) file containing the line
+
+    addSbtPlugin("me.lessis" % "np" % "0.2.0")
+    
+This will make `npSettings` globally visible to your project definitions.
+
+If you wish to globally mix in `npSettings`, create a file under ~/.sbt/0.13 called `np.sbt` ( it doesn't matter what you call this either ) containing the line
+
+    seq(npSettings: _*)
+
 ### Customization
 
 If you have a lot of projects that use the same ivy organization id (your own) or you always start projects with the same version conventions (a SNAPSHOT), you may want to define your own custom global overrides.
 
-To do so, in a `~/.sbt/np.sbt` file, add the following.
+To do so, in a `~/.sbt/np.sbt` file in sbt 0.12, or `~/.sbt/0.13/np.sbt` file in 0.13, add the following.
 
     seq(npSettings:_*)
 
@@ -84,6 +98,12 @@ See the `np` option reference section below for all available options
     scout(for np)    # detects potential conflicts with generating a project, recommended before np
     usage(for np)    # displays usage options
     defaults(for np) # default values for options
+
+In sbt 0.13 you can resolve the scoped settings using `::`
+
+    np::scout
+    np::usage
+    np::defaults
 
 ### np option reference
 
