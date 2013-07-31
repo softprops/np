@@ -5,9 +5,15 @@ organization := "me.lessis"
 name := "np"
 
 version <<= sbtVersion { v =>
-  if (v.startsWith("0.11") || v.startsWith("0.12")) "0.2.0"
+  if (v.startsWith("0.11") || v.startsWith("0.12") || v.startsWith("0.13")) "0.2.0"
   else error("unsupported version of sbt %s" format v)
 }
+
+sbtVersion in Global := "0.13.0-RC4"
+
+scalaVersion in Global := "2.10.2"
+
+scalacOptions += Opts.compile.deprecation
 
 seq(ScriptedPlugin.scriptedSettings:_*)
 
