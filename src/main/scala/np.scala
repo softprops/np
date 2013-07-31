@@ -1,7 +1,7 @@
 package np
 
 import sbt._
-import Project.Initialize
+import Def.Initialize
 
 case class Defaults(org: String, name: String, version: String,
                     plugin: Boolean = false, dir: String = ".")
@@ -12,9 +12,9 @@ private object BuildSbt {
 
   /** Handles cross sbt versioning.  */
   private def versionBind(version: String, plugin: Boolean) = {
-    if(!plugin) """:= "%s"""".format(version)
+    if (!plugin) """:= "%s"""".format(version)
     else {
-      if(version.contains(SbtVersion)) {
+      if (version.contains(SbtVersion)) {
         """<<= sbtVersion("%s" format _)""".format(version.replace(SbtVersion, "%s"))
       } else """:= "%s"""".format(version)
     }
@@ -105,45 +105,46 @@ object Plugin extends sbt.Plugin {
     }
 
   def npSettings0: Seq[Setting[_]] = Seq(
-    defaults in npkey <<= /*(defaults in npkey) or */(
-      name, organization, version)(Defaults(_, _, _)),
+    defaults in npkey := Defaults(name.value, organization.value, version.value),
     usage in npkey <<= usageTask,
-    scout in npkey <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
-      (argsTask, baseDirectory, streams, defaults in npkey) map {
-        (args, bd, out, defaults) =>
-          val (_, base) = extract(args, bd, defaults)
-          val (bf, dirs) = (
-            new File(base, "build.sbt"),
-            genDirs(base)
-          )
-          dirs :+ bf filter(_.exists) match {
-            case Nil =>
-              out.log.info("Looks good. Run `np` task to generate project.")
-            case existing =>
-              out.log.warn("The following files/directories already exist\n\n%s".format(
-                existing.mkString("\n\n"))
-              )
-          }
+    scout in npkey := {
+      val args = Def.spaceDelimited("<args>").parsed
+      val bd = baseDirectory.value
+      val out = streams.value
+      val defs = (defaults in npkey).value
+      val (_, base) = extract(args, bd, defs)
+      val (bf, dirs) = (
+        new File(base, "build.sbt"),
+        genDirs(base)
+      )
+      dirs :+ bf filter(_.exists) match {
+        case Nil =>
+          out.log.info("Looks good. Run `np` task to generate project.")
+        case existing =>
+          out.log.warn("The following files/directories already exist\n\n%s".format(
+            existing.mkString("\n\n"))
+        )
       }
     },
-    npkey <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
-      (argsTask, baseDirectory, streams, defaults in npkey) map {
-        (args, bd, out, defaults) =>
-          val (scpt, base) = extract(args, bd, defaults)
-          val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
+    npkey := {
+      val args = Def.spaceDelimited("<args>").parsed
+      val bd = baseDirectory.value
+      val out = streams.value
+      val defs = (defaults in npkey).value
+      val (scpt, base) = extract(args, bd, defs)
+      val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
 
-          // error out if any of the target files to generate
-          // already exist
-          if((dirs :+ bf).find(_.exists).isDefined) sys.error(
-            "\nexisting project detected at the path %s" format bf.getParent
-          )
+      // error out if any of the target files to generate
+      // already exist
+      if ((dirs :+ bf).find(_.exists).isDefined) sys.error(
+        "\nexisting project detected at the path %s" format bf.getParent
+      )
 
-          IO.write(bf, scpt)
-          out.log.info("Generated build file")
+      IO.write(bf, scpt)
+      out.log.info("Generated build file")
 
-          IO.createDirectories(dirs)
-          out.log.info("Generated source directories")
-       }
+      IO.createDirectories(dirs)
+      out.log.info("Generated source directories")
     }
   )
 
