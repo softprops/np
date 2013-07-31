@@ -77,7 +77,7 @@ If you don't already have one, create an `~/.sbt/0.13/plugins` directory. And in
     
 This will make `npSettings` globally visible to your project definitions.
 
-If you wish to globally mix in `npSettings`, create a file under ~/.sbt/0.13 called `np.sbt` ( it doesn't matter what you call this either ) containing the line
+If you wish to globally mix in `npSettings`, create a file under `~/.sbt/0.13` called `np.sbt` ( it doesn't matter what you call this either ) containing the line
 
     seq(npSettings: _*)
 
