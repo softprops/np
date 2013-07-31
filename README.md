@@ -40,9 +40,12 @@ Or remove the generated stub `build.sbt` and just use the generate source tree
 
 In most cases a global installation will make the most sense as the target usage for this plugin is the creation of new projects
 
+
 ### for sbt 0.12 of lower
 
-If you have a `~/.sbt` directory created, in a `~/.sbt/plugins/build.sbt` file add the following
+For global installation, if you have a `~/.sbt` directory created, in a `~/.sbt/plugins/build.sbt` file add the following
+
+For local installation, if you have a `~/project` directory created, in a `~/project/build.sbt` file add the following
 
     addSbtPlugin("me.lessis" % "np" % "0.2.0")
 
