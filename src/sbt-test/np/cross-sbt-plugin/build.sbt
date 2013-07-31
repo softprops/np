@@ -1,4 +1,4 @@
-// np settings are auto included
+seq(npSettings:_*)
 
 InputKey[Unit]("contents") <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
   (argsTask, streams) map {

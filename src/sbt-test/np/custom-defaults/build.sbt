@@ -1,4 +1,4 @@
-// np settings are auto included
+seq(npSettings:_*)
 
 (NpKeys.defaults in (Compile, NpKeys.np)) <<= (NpKeys.defaults in (Compile,NpKeys.np))(d =>
   d.copy(name = "foo", org = "com.bar",
