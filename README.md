@@ -67,7 +67,7 @@ Be sure to _explicitly_ mix np's settings into your build definition.
 
     seq(npSettings: _*)
 
-Doing this in a global `.sbt` file under `~/.sbt` will make `np`'s setting available to all of your sbt projects.
+Doing this in a global `.sbt` file under `~/.sbt` (e.g. ~/.sbt/np.sbt) will make `np`'s setting available to all of your sbt projects.
 
 ### for sbt 0.13+
 
