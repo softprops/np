@@ -34,14 +34,14 @@ Or remove the generated stub `build.sbt` and just use the generate source tree
 ## Requirements
 
 - Simple Build Tool
-- The buring desire to start your projects quickly
+- The burning desire to start your projects quickly
 
 ## Installation
 
 In most cases a global installation will make the most sense as the target usage for this plugin is the creation of new projects
 
 
-### for sbt 0.12 of lower
+### For sbt 0.12 or lower
 
 For global installation, if you have a `~/.sbt` directory created, in a `~/.sbt/plugins/build.sbt` file add the following
 
@@ -69,7 +69,7 @@ Be sure to _explicitly_ mix np's settings into your build definition.
 
 Doing this in a global `.sbt` file under `~/.sbt` (e.g. ~/.sbt/np.sbt) will make `np`'s setting available to all of your sbt projects.
 
-### for sbt 0.13+
+### For sbt 0.13+
 
 If you don't already have one, create an `~/.sbt/0.13/plugins` directory. And inside of it, create an `np.sbt` ( it doesn't matter what you call it ) file containing the line
 
@@ -122,6 +122,6 @@ In sbt 0.13 you can resolve the scoped settings using `::`
 
 Please post any issues or ideas you have to [np's issues](https://github.com/softprops/np/issues)
 
-If you like rolling up your sleaves, feel free to fork and create a feature branch
+If you like rolling up your sleeves, feel free to fork and create a feature branch
 
 Doug Tangren (softprops) 2011-12
