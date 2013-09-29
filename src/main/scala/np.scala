@@ -113,8 +113,10 @@ object Plugin extends sbt.Plugin {
       val (scpt, base) = extract(args, bd, defs)
       val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
 
-      val toCreateButExisting = dirs :+ bf filter (_.exists)
-      (out, toCreateButExisting, scpt, bf, dirs)
+      //XXX hardcodes relative path
+      val buildProps = base / "project" / "build.properties"
+      val toCreateButExisting = dirs :+ bf :+ buildProps filter (_.exists)
+      (out, toCreateButExisting, scpt, buildProps, bf, dirs)
     }
 
   def npSettings0: Seq[Setting[_]] = Seq(
@@ -122,7 +124,7 @@ object Plugin extends sbt.Plugin {
     usage in npkey <<= usageTask,
     scout in npkey := {
       val tmp = pathsTask.evaluated
-      val (out, toCreateButExisting, _, _, _) = tmp
+      val (out, toCreateButExisting, _, _, _, _) = tmp
 
       toCreateButExisting match {
         case Nil =>
@@ -135,13 +137,16 @@ object Plugin extends sbt.Plugin {
     },
     npkey := {
       val tmp = pathsTask.evaluated
-      val (out, toCreateButExisting, scpt, bf, dirs) = tmp
+      val (out, toCreateButExisting, scpt, buildProps, bf, dirs) = tmp
 
       // error out if any of the target files to generate
       // already exist
       if (toCreateButExisting.nonEmpty) sys.error(
         "\nexisting project detected at the path %s" format bf.getParent
       )
+
+      IO.write(buildProps, "sbt.version=%s\n" format sbtVersion.value)
+      out.log.info("Generated build properties")
 
       IO.write(bf, scpt)
       out.log.info("Generated build file")
