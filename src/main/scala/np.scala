@@ -104,20 +104,27 @@ object Plugin extends sbt.Plugin {
         out.log.info(Usage.display)
     }
 
-  def npSettings0: Seq[Setting[_]] = Seq(
-    defaults in npkey := Defaults(name.value, organization.value, version.value),
-    usage in npkey <<= usageTask,
-    scout in npkey := {
+  private lazy val pathsTask =
+    Def.inputTask {
       val args = Def.spaceDelimited("<args>").parsed
       val bd = baseDirectory.value
       val out = streams.value
       val defs = (defaults in npkey).value
-      val (_, base) = extract(args, bd, defs)
-      val (bf, dirs) = (
-        new File(base, "build.sbt"),
-        genDirs(base)
-      )
-      dirs :+ bf filter(_.exists) match {
+      val (scpt, base) = extract(args, bd, defs)
+      val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
+
+      val toCreateButExisting = dirs :+ bf filter (_.exists)
+      (out, toCreateButExisting, scpt, bf, dirs)
+    }
+
+  def npSettings0: Seq[Setting[_]] = Seq(
+    defaults in npkey := Defaults(name.value, organization.value, version.value),
+    usage in npkey <<= usageTask,
+    scout in npkey := {
+      val tmp = pathsTask.evaluated
+      val (out, toCreateButExisting, _, _, _) = tmp
+
+      toCreateButExisting match {
         case Nil =>
           out.log.info("Looks good. Run `np` task to generate project.")
         case existing =>
@@ -127,16 +134,12 @@ object Plugin extends sbt.Plugin {
       }
     },
     npkey := {
-      val args = Def.spaceDelimited("<args>").parsed
-      val bd = baseDirectory.value
-      val out = streams.value
-      val defs = (defaults in npkey).value
-      val (scpt, base) = extract(args, bd, defs)
-      val (bf, dirs) = (new File(base, "build.sbt"), genDirs(base))
+      val tmp = pathsTask.evaluated
+      val (out, toCreateButExisting, scpt, bf, dirs) = tmp
 
       // error out if any of the target files to generate
       // already exist
-      if ((dirs :+ bf).find(_.exists).isDefined) sys.error(
+      if (toCreateButExisting.nonEmpty) sys.error(
         "\nexisting project detected at the path %s" format bf.getParent
       )
 
