@@ -9,7 +9,7 @@ version <<= sbtVersion { v =>
   else error("unsupported version of sbt %s" format v)
 }
 
-sbtVersion in Global := "0.13.0-RC4"
+sbtVersion in Global := "0.13.0"
 
 scalaVersion in Global := "2.10.2"
 
