@@ -25,12 +25,13 @@ private object BuildSbt {
     |
     |name := "%s"
     |
-    |version %s""".stripMargin.format(
+    |version %s
+    |""".stripMargin.format(
       if(plugin) "sbtPlugin := true\n\n" else "",
       org,
       name,
       versionBind(version, plugin)
-    ).trim()
+    )
 }
 
 private object Usage {
