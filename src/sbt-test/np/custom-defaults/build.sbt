@@ -10,7 +10,7 @@ InputKey[Unit]("contents") <<= inputTask { (argsTask: TaskKey[Seq[String]]) =>
     (args, out) =>
       args match {
         case Seq(given, expected) =>
-          if(IO.read(file(given)).trim.equals(IO.read(file(expected)).trim)) out.log.debug(
+          if(IO.readLines(file(given)).equals(IO.readLines(file(expected)))) out.log.debug(
             "Contents match"
           )
           else error(
